@@ -499,10 +499,10 @@ $('#cert-3').dialog({
 });
 
 //VALIDATION
-var greenlight = $("#greenlight");
-  //if greenlight
-    greenlight.prop('checked', true);
-    greenlight.trigger('change'); 
+// var greenlight = $("#greenlight");
+//   //if greenlight
+//     greenlight.prop('checked', true);
+//     greenlight.trigger('change'); 
   //handle error fields with adding and removing 'error' class (also use hasClass())
 
 //START BALLOON VALIDATION
@@ -626,25 +626,58 @@ var greenlight = $("#greenlight");
       
     }
     function checkDistWTTol(compliant){
-      
+      var DIST_WT_TOL = Number($("#DIST-WT-TOL").val());
+      if(complaint) {
+        if(DIST_WT_TOL >= 0.001) { $("#DIST-WT-TOL").removeClass('error'); return true; } else { $("#DIST-WT-TOL").addClass('error'); return false; }
+      } else {
+        if(DIST_WT_TOL >= 0.001) { $("#DIST-WT-TOL").removeClass('error'); return true; } else { $("#DIST-WT-TOL").addClass('error'); return false; }
+      }  
     }
     function checkProxWT(compliant){
       
     }
     function checkProxWTTol(compliant){
-      
+      var PROX_WT_TOL = Number($("#PROX-WT-TOL").val());
+      if(complaint) {
+        if(PROX_WT_TOL >= 0.001) { $("#PROX-WT-TOL").removeClass('error'); return true; } else { $("#PROX-WT-TOL").addClass('error'); return false; }
+      } else {
+        if(PROX_WT_TOL >= 0.001) { $("#PROX-WT-TOL").removeClass('error'); return true; } else { $("#PROX-WT-TOL").addClass('error'); return false; }
+      } 
     }
     function checkDistCone(compliant){
+	
+	if (!$("#DIST-CURVE").is(":checked")) {
+		var DIST_CONE = Number($("#DIST-CONE").val());
+		if(DIST_CONE >= 20 && DIST_CONE <= 90 ) { $("#DIST-CONE").removeClass('error'); return true; } else { $("#DIST-CONE").addClass('error'); return false; }
+	} else {
+		return true;
+	}
       
     }
     function checkDistConeTol(compliant){
-      
+      if (!$("#DIST-CURVE").is(":checked")) {
+		var DIST_CONE_TOL = Number($("#DIST-CONE-TOL").val());
+		if(DIST_CONE_TOL >= 3) { $("#DIST-CONE-TOL").removeClass('error'); return true; } else { $("#DIST-CONE-TOL").addClass('error'); return false; }
+	} else {
+		return true;
+	}
     }
+
     function checkProxCone(compliant){
-      
+      if (!$("#PROX-CURVE").is(":checked")) {
+		var PROX_CONE = Number($("#PROX-CONE").val());
+		if(PROX_CONE >= 20 && PROX_CONE <= 90 ) { $("#PROX-CONE").removeClass('error'); return true; } else { $("#PROX-CONE").addClass('error'); return false; }
+	} else {
+		return true;
+	}
     }
     function checkProxConeTol(compliant){
-      
+      if (!$("#PROX-CURVE").is(":checked")) {
+		var PROX_CONE_TOL = Number($("#PROX-CONE-TOL").val());
+		if(PROX_CONE_TOL >= 3) { $("#PROX-CONE-TOL").removeClass('error'); return true; } else { $("#PROX-CONE-TOL").addClass('error'); return false; }
+	} else {
+		return true;
+	}
     }
 
 function calculate() {
@@ -697,38 +730,47 @@ if($("#QUANTITY").val() == 'More') {
 }
   //Non-Semi Compliant
   if(['Vestamid ML21','PET','Pebax 55D', 'Pebax 63D', 'Pebax 72D'].includes($("#MATERIAL").val())) {
-    checkDistNeck(false)
-    checkProxNeck(false)
-    checkDistNeckTol(false)
-    checkProxNeckTol(false)
-    checkLength(false)
-    checkLengthTol(false)
-    checkDiameter(false)
-    checkDiameterTol(false)
-    checkDWT(false)
-    checkDWTTol(false)
-    checkDistOd(false)
-    checkDistOdTol(false)
-    checkProxOd(false)
-    checkProxOdTol(false)
-    checkDistWT(false)
-    checkDistWTTol(false)
-    checkProxWT(false)
-    checkProxWTTol(false)
-    checkDistCone(false)
-    checkDistConeTol(false)
-    checkProxCone(false)
-    checkProxConeTol(false)
-    
     
     //CHECK FOR GREENLIGHT
-    if(DIST_NECK <= 25 && DIST_NECK >= 2 && PROX_NECK <= 25 && PROX_NECK >= 2 && DWT >= 0.0015 && DWT <= 0.003 && (DIAMETER >= Math.min(DIST_OD,PROX_OD)+ 0.5) &&) {
-      
-    }
+    if(checkDistNeck(false) && checkProxNeck(false) && checkDistNeckTol(false) && checkProxNeckTol(false) && checkLength(false) && checkLengthTol(false) && checkDiameter(false) && checkDiameterTol(false) && checkDWT(false) && checkDWTTol(false) && checkDistOd(false) && checkDistOdTol(false) && checkProxOd(false) && checkProxOdTol(false) && checkDistWT(false) && checkDistWTTol(false) && checkProxWT(false) && checkProxWTTol(false) && checkDistCone(false) && checkDistConeTol(false) && checkProxCone(false) && checkProxConeTol(false)) 
+	{
+      		//Balloon is GREENLIGHT!
+		var greenlight = $("#greenlight");
+   		greenlight.prop('checked', true);
+    		greenlight.trigger('change');
+		$("#custom-quote").prop('checked', false);
+    		$("#custom-quote").trigger('change');
+		console.log('non compliant is greenlight')
+    	} else {
+		//Balloon is REDLIGHT
+		var greenlight = $("#greenlight");
+   		greenlight.prop('checked', false);
+    		greenlight.trigger('change');
+		$("#custom-quote").prop('checked', true);
+    		$("#custom-quote").trigger('change');
+		console.log('non compliant is redlight')
+	}
   }
   //Complaint
     if(['Pellethane 80A','Pellethane 90A'].includes($("#MATERIAL").val())) {
-    
+        if(checkDistNeck(true) && checkProxNeck(true) && checkDistNeckTol(true) && checkProxNeckTol(true) && checkLength(true) && checkLengthTol(true) && checkDiameter(true) && checkDiameterTol(true) && checkDWT(true) && checkDWTTol(true) && checkDistOd(true) && checkDistOdTol(true) && checkProxOd(true) && checkProxOdTol(true) && checkDistWT(true) && checkDistWTTol(true) && checkProxWT(true) && checkProxWTTol(true) && checkDistCone(true) && checkDistConeTol(true) && checkProxCone(true) && checkProxConeTol(true)) 
+	{
+		//Balloon is greenlight!
+		var greenlight = $("#greenlight");
+   		greenlight.prop('checked', true);
+    		greenlight.trigger('change');
+		$("#custom-quote").prop('checked', false);
+    		$("#custom-quote").trigger('change');	
+		console.log('compliant is greenlight')
+	} else {
+		//Balloon is REDLIGHT
+		var greenlight = $("#greenlight");
+   		greenlight.prop('checked', false);
+    		greenlight.trigger('change');
+		$("#custom-quote").prop('checked', true);
+    		$("#custom-quote").trigger('change');
+		console.log('compliant is redlight')
+	}
   }
 } // END CALCULATE
 
